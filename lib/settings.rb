@@ -9,17 +9,19 @@ module M2
     def initialize(path)
       @path = path
       begin
-        @xml = Nokogiri.XML File.open(path, 'r')
+        @xml = Nokogiri.XML File.open(path, 'r') if File.exist?(path)
       rescue
         puts "#{path} is not exist"
       end
     end
 
+    attr_reader :path
+
     def is_exist?
       not @xml.nil?
     end
 
-    def save
+    def save!
       raise Exception.new('no xml content to save') if @xml.nil?
       begin
         File.open(@path, 'w').write @xml.to_xml
@@ -42,7 +44,7 @@ module M2
       has_servers? and not @xml.xpath("//xmlns:servers//xmlns:id[text()='#{SVN_ADDRESS}']").empty?
     end
 
-    def set_svn_server(user_name, password)
+    def set_svn_server!(user_name, password)
       server_template=<<-SERVER
 <server>
     <id>#{SVN_ADDRESS}</id>
@@ -76,7 +78,7 @@ module M2
       has_root? and not @xml.xpath('//settingsSecurity/master').empty?
     end
 
-    def set_master_password(masked_password)
+    def set_master_password!(masked_password)
       master_template =<<-MASTER
 <master>#{masked_password}</master>
       MASTER
@@ -90,6 +92,7 @@ module M2
 </settingsSecurity>
         SECURITY
       end
+      self
     end
   end
 
