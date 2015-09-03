@@ -1,18 +1,11 @@
 require 'yaml'
 require 'Nokogiri'
 
-PROPS = YAML.load_file('./lib/prop.yml')
-SVN_ADDRESS = "#{PROPS['svn']['host']}:#{PROPS['svn']['port']}"
-
 module M2
   class XML
     def initialize(path)
       @path = path
-      begin
-        @xml = Nokogiri.XML File.open(path, 'r') if File.exist?(path)
-      rescue
-        puts "#{path} is not exist"
-      end
+      @xml = Nokogiri.XML File.open(path, 'r') if File.exist?(path)
     end
 
     attr_reader :path
@@ -40,8 +33,8 @@ module M2
       not @xml.xpath('//xmlns:servers').empty?
     end
 
-    def has_svn_server?
-      has_servers? and not @xml.xpath("//xmlns:servers//xmlns:id[text()='#{SVN_ADDRESS}']").empty?
+    def has_svn_server?(svn_address)
+      has_servers? and not @xml.xpath("//xmlns:servers//xmlns:id[text()='#{svn_address}']").empty?
     end
 
     def set_svn_server!(user_name, password)

@@ -3,10 +3,8 @@ require 'Nokogiri'
 require 'colorize'
 require 'highline/import'
 
-require './lib/settings'
+require './lib/m2'
 require './lib/maven_encryption'
-
-prop = YAML.load_file('./lib/prop.yml')
 
 namespace :release do
   namespace :setup do
@@ -35,7 +33,7 @@ namespace :release do
 
     task :svn_account do
       settings = M2::Settings.new
-      unless settings.is_exist? && settings.has_svn_server?
+      unless settings.is_exist? && settings.has_svn_server?('TODO')
 
       else
         say 'Your svn server is all right'.green
